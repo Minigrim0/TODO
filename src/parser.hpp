@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <map>
+#include <list>
 
 
 /**
@@ -11,4 +11,4 @@
  * @param argv The array of args
  * @param parsed The map of parsed arguments, to be modified by the function
  */
-void parse_arguments(int argc, char* argv[], std::map<std::string, std::string> parsed);
+void parse_arguments(int argc, char* argv[], std::list<std::string>* parsed);
