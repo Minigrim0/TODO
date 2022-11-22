@@ -13,6 +13,7 @@
 void parse_loop(std::list<std::string>* args, std::list<std::string>* parsed){
     std::string arg = args->front();
     args->pop_front();
+
     if(arg == "-h" || arg == "--help"){
         parsed->push_back("help");
     }else if(arg == "-v" || arg == "--version"){
