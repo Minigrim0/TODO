@@ -1,5 +1,6 @@
 #include "parser.hpp"
 #include "exceptions.hpp"
+#include "commands.hpp"
 
 #include <iostream>
 #include <string.h>
@@ -15,11 +16,11 @@ void parse_loop(std::list<std::string>* args, std::list<std::string>* parsed){
     args->pop_front();
 
     if(arg == "-h" || arg == "--help"){
-        parsed->push_back("help");
+        parsed->push_back(HELP_ID);
     }else if(arg == "-v" || arg == "--version"){
-        parsed->push_back("version");
+        parsed->push_back(VERSION_ID);
     }else if(arg == "-a" || arg == "--add"){
-        parsed->push_back("add");
+        parsed->push_back(ADD_ID);
         // Check at least one parameter was passed (the name)
         if(args->size() == 0){
             char* exception_string = new char[100];
@@ -33,15 +34,15 @@ void parse_loop(std::list<std::string>* args, std::list<std::string>* parsed){
         parsed->push_back(args->front());
         args->pop_front();
     }else if(arg == "-l" || arg == "--list"){
-        parsed->push_back("list");
+        parsed->push_back(LIST_ID);
     }else if(arg == "-m" || arg == "--modify"){
-        parsed->push_back("modify");
+        parsed->push_back(EDIT_ID);
     }else if(arg == "-d" || arg == "--delete"){
-        parsed->push_back("delete");
+        parsed->push_back(REMOVE_ID);
     }else if(arg == "-s" || arg == "--search"){
-        parsed->push_back("search");
+        parsed->push_back(SEARCH_ID);
     }else if(arg == "-c" || arg == "--clear"){
-        parsed->push_back("clear");
+        parsed->push_back(CLEAR_ID);
     }else{
         char* exception_string = new char[100];
         sprintf(exception_string, UNKNOWN_COMMAND_ERROR_STRING, args->front());
