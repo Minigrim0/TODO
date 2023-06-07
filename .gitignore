@@ -1,2 +1,6 @@
 build/
 *.sqlite3
+
+# Added by cargo
+
+/target
