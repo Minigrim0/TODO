@@ -1,52 +1,26 @@
 /* This module allows reading and writing to the database
  */
 
-use std::fs::File;
-use std::io::prelude::*;
-use std::io::BufReader;
+use diesel::SqliteConnection;
+use diesel::prelude::*;
+use todo::models::Task;
+use todo::establish_connection;
 
-pub fn read_tasks() -> Vec<String> {
-    if File::open("tasks.txt").is_err() {
-        File::create("tasks.txt").expect("Could not create file");
+
+pub fn read_tasks() {
+    use todo::schema::tasks::dsl::*;
+
+    let connection: &mut SqliteConnection = &mut establish_connection();
+    let results = tasks
+        .limit(5)
+        .select(Task::as_select())
+        .load(connection)
+        .expect("Error loading tasks");
+
+    println!("{} task(s)", results.len());
+    for task in results {
+        println!("{}", task.title);
+        println!("-----------\n");
+        println!("{}", task.description.unwrap());
     }
-    let file = File::open("tasks.txt").expect("Could not open file");
-    let reader = BufReader::new(file);
-    let mut tasks = Vec::new();
-    for line in reader.lines() {
-        tasks.push(line.expect("Could not read line"));
-    }
-    tasks
-}
-
-pub fn write_tasks(tasks: Vec<String>) {
-    let mut file = File::create("tasks.txt").expect("Could not create file");
-    for task in tasks {
-        writeln!(file, "{}", task).expect("Could not write line");
-    }
-}
-
-pub fn add_task(task: String) {
-    let mut tasks = read_tasks();
-    tasks.push(task);
-    write_tasks(tasks);
-}
-
-pub fn remove_task(task: String) {
-    let mut tasks = read_tasks();
-    let position = tasks
-        .iter()
-        .position(|t| t == &task)
-        .expect("Task not found");
-    tasks.remove(position);
-    write_tasks(tasks);
-}
-
-pub fn complete_task(task: String) {
-    let mut tasks = read_tasks();
-    let position = tasks
-        .iter()
-        .position(|t| t == &task)
-        .expect("Task not found");
-    tasks[position].push_str(" [DONE]");
-    write_tasks(tasks);
 }

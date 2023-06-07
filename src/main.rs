@@ -1,7 +1,5 @@
 pub mod tasks;
 
-use tasks::{add_task, remove_task, complete_task};
-
 fn main() {
     // Read arguments
     let args: Vec<String> = std::env::args().collect();
@@ -22,27 +20,31 @@ fn main() {
         "add" => {
             // Get third argument
             let task: &String = &args[2];
+            println!("{}", task);
             // Add task
-            add_task(task.to_string());
+            // add_task(task.to_string());
         }
         "remove" => {
             // Get third argument
             let task: &String = &args[2];
+            println!("{}", task);
             // Remove task
-            remove_task(task.to_string());
+            // remove_task(task.to_string());
         }
         "complete" => {
             // Get third argument
             let task: &String = &args[2];
+            println!("{}", task);
             // Complete task
-            complete_task(task.to_string());
+            // complete_task(task.to_string());
         }
         "list" => {
             // List tasks
-            let tasks = tasks::read_tasks();
-            for task in tasks {
-                println!("{}", task);
-            }
+            tasks::read_tasks();
+            //let tasks: Vec<Task> = tasks::read_tasks();
+            // for task in tasks {
+            //     println!("{}", task.description.unwrap());
+            // }
         }
         _ => {
             // Print usage
