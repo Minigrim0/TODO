@@ -8,5 +8,14 @@ pub struct Task {
     pub title: String,
     pub description: Option<String>,
     pub created_at: String,
+    pub due_date: Option<String>,
     pub status: bool,
+}
+
+#[derive(Insertable)]
+#[diesel(table_name = crate::schema::tasks)]
+pub struct NewTask<'a> {
+    title: &'a str,
+    description: Option<&'a str>,
+    due_date: Option<&'a str>
 }
