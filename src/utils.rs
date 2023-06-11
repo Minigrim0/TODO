@@ -1,50 +1,16 @@
+use crate::cli::Cli;
+use crate::models::NewTask;
+use crate::database;
+
 use colored::Colorize;
-use clap::Parser;
 use diesel::sqlite::SqliteConnection;
 use diesel::prelude::*;
 use dotenvy::dotenv;
 use std::io::Write;
 use std::{env, io};
 
-use crate::database;
-use crate::models::NewTask;
 
 
-#[derive(Parser, Default, Debug)]
-#[clap(author="Minigrim0", version, about="A simple CLI task manager")]
-pub struct Cli {
-    #[arg(short = 'l', long = "list")]
-    /// Lists tasks
-    command_list: bool,
-
-    #[arg(short = 'a', long = "add")]
-    /// Create a new task (with a dialog if no other argument is provided)
-    command_add: bool,
-
-    #[arg(short = 'd', long = "delete")]
-    /// Create a new task (with a dialog if no other argument is provided)
-    command_delete: bool,
-
-    #[arg(short = 'n', long = "name")]
-    /// Defines the task name to use in the action
-    task_name: Option<String>,
-
-    #[arg(short = 'D', long = "description")]
-    /// Defines the description when adding a task
-    task_description: Option<String>,
-
-    #[arg(short = 'e', long = "duedate")]
-    /// Defines the due date when adding a task
-    duedate: Option<String>,
-
-    #[arg(short = 't', long = "task", default_value_t = -1)]
-    /// Defines the task ID for the viewing action
-    task_id: i32,
-
-    #[arg(long="overdue")]
-    /// Defines the task ID for the viewing action
-    show_overdue: bool,
-}
 
 
 pub fn establish_connection() -> SqliteConnection {
@@ -55,26 +21,24 @@ pub fn establish_connection() -> SqliteConnection {
         .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
 }
 
+pub fn validate_task_id(task_id: Option<i32>) -> i32 {
+    let id = task_id.unwrap_or(-1);
+    if id == -1 || id < 1 {
+        std::process::exit(-1);
+    }
+    id
+}
+
 
 pub fn display_task(task: crate::models::Task) {
     let mut tasks = Vec::new();
     tasks.push(task);
-    display_tasks(tasks);
+    display_tasks(tasks, false);
 }
 
 
-pub fn display_tasks(tasks: Vec<crate::models::Task>) {
-    match tasks.len() {
-        0 => {
-            println!("{}", "No task to display !".blue());
-            println!(" => try {} one with {}", "creating".green(), "todo add".green().bold());
-            return;
-        }
-        1 => {}
-        _ => {
-            println!("Displaying {} tasks", tasks.len());
-        }
-    }
+pub fn display_tasks(tasks: Vec<crate::models::Task>, show_amount: bool) {
+    if show_amount { println!("Displaying {} tasks", tasks.len()); }
 
     println!(
         "{:>5} | {:>10} | {:>30} | {:>9} | {:>8}",
@@ -110,7 +74,7 @@ pub fn parse_args(args: Cli) {
     match args {
         Cli {command_list: true, show_overdue, ..} => {
             let tasks: Vec<crate::models::Task> = database::read_tasks(show_overdue);
-            display_tasks(tasks);
+            display_tasks(tasks, true);
         }
         Cli {command_add: true, task_name, task_description, .. } => {
             let mut name: String = String::new();
@@ -157,31 +121,29 @@ pub fn parse_args(args: Cli) {
             display_task(task);
         }
         Cli {command_delete: true, task_id, ..} => {
-            if task_id == -1 || task_id < 1 {
-                println!("{}", "No valid task id provided !".red());
-                std::process::exit(-1);
-            }
+            let id = validate_task_id(task_id);
 
             // TODO: Ask for a confirmation
 
-            // Remove task
-            if database::delete_task(task_id) {
+            if database::delete_task(id) {
                 println!("{}", "Removal successful !".green().bold())
             }
         }
-        // "complete" => {
-        //     // Get third argument
-        //     let task: &String = &args[2];
-        //     println!("{}", task);
-        //     // Complete task
-        //     // complete_task(task.to_string());
-        // }
-        // "view" => {  // List tasks
-        //     tasks::read_tasks(false);
-        // }
-        // "overdue" => {  // List overdue tasks
-        //     tasks::read_tasks(true);
-        // }
+        Cli {command_complete: true, task_id, ..} => {
+            let id = validate_task_id(task_id);
+
+            // Complete task
+            if database::complete_task(id) {
+                println!(
+                    "{} {} {}",
+                    "Successfully marked task".green().bold(),
+                    id.to_string().green().bold(),
+                    "as completed".green().bold()
+                )
+            }
+            let tasks: Vec<crate::models::Task> = database::read_tasks(false);
+            display_tasks(tasks, false);
+        }
         _ => {  // Print usage
             println!("{}", format!("Could not parse the command, type --help for help").red().bold());
         }
