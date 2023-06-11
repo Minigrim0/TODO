@@ -7,7 +7,7 @@ use crate::models::{Task, NewTask};
 use crate::utils::establish_connection;
 
 
-pub fn read_tasks(overdue: bool) {
+pub fn read_tasks(overdue: bool) -> Vec<Task> {
     use crate::schema::tasks::dsl::*;
 
     let connection: &mut SqliteConnection = &mut establish_connection();
@@ -28,17 +28,7 @@ pub fn read_tasks(overdue: bool) {
         .expect("Error loading tasks");
     }
 
-    println!("{} {}task(s)", results.len(), if overdue { "overdue " } else { "" });
-    print!("{:>5} | ", "ID");
-    print!("{:>10} | ", "Name");
-    println!("{:>30}", "Description");
-
-    for task in results {
-        print!("{:0>5} | ", task.id);
-        print!("{:>10} | ", task.title);
-        print!("{:>30}", task.description.unwrap());
-        println!();
-    }
+    results
 }
 
 
@@ -62,4 +52,8 @@ pub fn add_task(task: NewTask) -> Task {
         .find(last_id)
         .first(conn)
         .expect("Error getting inserted task")
+}
+
+pub fn delete_task(task_id: i32) -> bool {
+    false
 }

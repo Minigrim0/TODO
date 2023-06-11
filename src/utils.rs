@@ -50,12 +50,32 @@ pub fn establish_connection() -> SqliteConnection {
     SqliteConnection::establish(&database_url)
         .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
 }
+pub fn display_task(task: crate::models::Task) {
+    let mut tasks = Vec::new();
+    tasks.push(task);
+    display_tasks(tasks);
+}
+
+pub fn display_tasks(tasks: Vec<crate::models::Task>) {
+    print!("{:>5} | ", "ID");
+    print!("{:>10} | ", "Name");
+    println!("{:>30}", "Description");
+
+    for task in tasks {
+        print!("{:0>5} | ", task.id);
+        print!("{:>10} | ", task.title);
+        print!("{:>30}", task.description.unwrap());
+        println!();
+    }
+}
 
 
 pub fn parse_args(args: Cli) {
     match args {
         Cli {command_list: true, show_overdue, ..} => {
-            database::read_tasks(show_overdue);
+            let tasks: Vec<crate::models::Task> = database::read_tasks(show_overdue);
+            println!("Displaying {} {}task(s)", tasks.len(), if show_overdue { "overdue " } else { "" });
+            display_tasks(tasks);
         }
         Cli {command_add: true, task_name, task_description, .. } => {
             let mut name: String = String::new();
@@ -98,7 +118,8 @@ pub fn parse_args(args: Cli) {
                 description: Some(&description),
                 due_date: None
             };
-            database::add_task(new_task);
+            let task: crate::models::Task = database::add_task(new_task);
+            display_task(task);
         }
         // "remove" => {
         //     // Get third argument
