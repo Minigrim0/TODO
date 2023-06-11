@@ -21,11 +21,15 @@ pub struct Cli {
     /// Create a new task (with a dialog if no other argument is provided)
     command_add: bool,
 
+    #[arg(short = 'd', long = "delete")]
+    /// Create a new task (with a dialog if no other argument is provided)
+    command_delete: bool,
+
     #[arg(short = 'n', long = "name")]
     /// Defines the task name to use in the action
     task_name: Option<String>,
 
-    #[arg(short = 'd', long = "description")]
+    #[arg(short = 'D', long = "description")]
     /// Defines the description when adding a task
     task_description: Option<String>,
 
@@ -50,22 +54,54 @@ pub fn establish_connection() -> SqliteConnection {
     SqliteConnection::establish(&database_url)
         .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
 }
+
+
 pub fn display_task(task: crate::models::Task) {
     let mut tasks = Vec::new();
     tasks.push(task);
     display_tasks(tasks);
 }
 
+
 pub fn display_tasks(tasks: Vec<crate::models::Task>) {
-    print!("{:>5} | ", "ID");
-    print!("{:>10} | ", "Name");
-    println!("{:>30}", "Description");
+    match tasks.len() {
+        0 => {
+            println!("{}", "No task to display !".blue());
+            println!(" => try {} one with {}", "creating".green(), "todo add".green().bold());
+            return;
+        }
+        1 => {}
+        _ => {
+            println!("Displaying {} tasks", tasks.len());
+        }
+    }
+
+    println!(
+        "{:>5} | {:>10} | {:>30} | {:>9} | {:>8}",
+        "ID",
+        "Name",
+        "Description",
+        "Status",
+        "Due Date"
+    );
 
     for task in tasks {
-        print!("{:0>5} | ", task.id);
-        print!("{:>10} | ", task.title);
-        print!("{:>30}", task.description.unwrap());
-        println!();
+        println!(
+            "{}",
+            format!("{:0>5} | {:>10} | {:>30} | {:>9} | {:>8}",
+                task.id.to_string().magenta(),
+                task.title,
+                match task.description {
+                    Some(desc) => desc,
+                    None => "".to_string()
+                },
+                if task.status { "Completed".green() } else { "Running".blue() },
+                match task.due_date {
+                    Some(date) => date,
+                    None => "Unknown".yellow().to_string()
+                }
+            )
+        );
     }
 }
 
@@ -74,7 +110,6 @@ pub fn parse_args(args: Cli) {
     match args {
         Cli {command_list: true, show_overdue, ..} => {
             let tasks: Vec<crate::models::Task> = database::read_tasks(show_overdue);
-            println!("Displaying {} {}task(s)", tasks.len(), if show_overdue { "overdue " } else { "" });
             display_tasks(tasks);
         }
         Cli {command_add: true, task_name, task_description, .. } => {
@@ -121,13 +156,19 @@ pub fn parse_args(args: Cli) {
             let task: crate::models::Task = database::add_task(new_task);
             display_task(task);
         }
-        // "remove" => {
-        //     // Get third argument
-        //     let task: &String = &args[2];
-        //     println!("{}", task);
-        //     // Remove task
-        //     // remove_task(task.to_string());
-        // }
+        Cli {command_delete: true, task_id, ..} => {
+            if task_id == -1 || task_id < 1 {
+                println!("{}", "No valid task id provided !".red());
+                std::process::exit(-1);
+            }
+
+            // TODO: Ask for a confirmation
+
+            // Remove task
+            if database::delete_task(task_id) {
+                println!("{}", "Removal successful !".green().bold())
+            }
+        }
         // "complete" => {
         //     // Get third argument
         //     let task: &String = &args[2];
