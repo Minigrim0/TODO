@@ -8,6 +8,25 @@ use crate::models::{Task, NewTask};
 use crate::utils::establish_connection;
 
 
+pub fn get_task(task_id: i32) -> Option<Task> {
+    use crate::schema::tasks::dsl::*;
+
+    let connection: &mut SqliteConnection = &mut establish_connection();
+
+    let results: Vec<Task> = tasks
+    .filter(id.eq(task_id))
+    .limit(1)
+    .select(Task::as_select())
+    .load(connection)
+    .unwrap();
+
+    match results.first() {
+        Some(task) => Some(*task),
+        None => None
+    }
+}
+
+
 pub fn read_tasks(overdue: bool) -> Vec<Task> {
     use crate::schema::tasks::dsl::*;
 
@@ -53,10 +72,7 @@ pub fn add_task(task: NewTask) -> Task {
         .expect("Error getting last insert rowid");
 
     // Get inserted task
-    tasks::table
-        .find(last_id)
-        .first(conn)
-        .expect("Error getting inserted task")
+    get_task(last_id).expect("Could not fetch the last insterd task")
 }
 
 pub fn delete_task(task_id: i32) -> bool {
@@ -86,4 +102,8 @@ pub fn complete_task(task_id: i32) -> bool {
         .execute(conn)
         .unwrap();
 
+    match get_task(task_id) {
+        Some(task) => task.status == true,
+        None => false
+    }
 }
