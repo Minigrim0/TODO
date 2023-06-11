@@ -1,4 +1,7 @@
 pub mod tasks;
+pub mod help;
+
+use colored::Colorize;
 
 fn main() {
     // Read arguments
@@ -6,10 +9,7 @@ fn main() {
     // Check length
     if args.len() < 2 {
         // Print usage
-        println!("Usage:");
-        println!("    add <task>: Adds a task");
-        println!("    remove <task>: Removes a task");
-        println!("    complete <task>: Completes a task");
+        help::show_help();
         return;
     }
 
@@ -19,8 +19,9 @@ fn main() {
     match arg.as_ref() {
         "add" => {
             // Get third argument
-            let task: &String = &args[2];
-            println!("{}", task);
+            let s_task_id: &String = &args[2];
+            let task_id: i32 = s_task_id.parse().unwrap();
+            println!("{}", task_id);
             // Add task
             // add_task(task.to_string());
         }
@@ -38,20 +39,15 @@ fn main() {
             // Complete task
             // complete_task(task.to_string());
         }
-        "list" => {
-            // List tasks
-            tasks::read_tasks();
-            //let tasks: Vec<Task> = tasks::read_tasks();
-            // for task in tasks {
-            //     println!("{}", task.description.unwrap());
-            // }
+        "view" => {  // List tasks
+            tasks::read_tasks(false);
         }
-        _ => {
-            // Print usage
-            println!("Usage:");
-            println!("    add <task>: Adds a task");
-            println!("    remove <task>: Removes a task");
-            println!("    complete <task>: Completes a task");
+        "overdue" => {  // List overdue tasks
+            tasks::read_tasks(true);
+        }
+        _ => {  // Print usage
+            println!("{}", format!("Unknown command '{}'", arg).red().bold());
+            help::show_help();
         }
     }
 }
