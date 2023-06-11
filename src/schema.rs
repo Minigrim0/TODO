@@ -6,6 +6,7 @@ diesel::table! {
         title -> Text,
         description -> Nullable<Text>,
         created_at -> Timestamp,
+        due_date -> Nullable<Timestamp>,
         status -> Bool,
     }
 }
