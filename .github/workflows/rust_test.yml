@@ -18,7 +18,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: install dependencies
-      run: apt update && apt install rustc libsqlite3-dev -y
+      run: sudo apt update && sudo apt install rustc libsqlite3-dev -y
     - name: install diesel-cli
       run: cargo install diesel --features sqlite
     - name: Build
