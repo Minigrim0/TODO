@@ -1,5 +1,7 @@
 use clap::Parser;
 
+mod tests;
+
 pub mod cli;
 pub mod schema;
 pub mod models;
