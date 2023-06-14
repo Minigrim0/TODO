@@ -9,9 +9,8 @@ Some tasks may have deadlines and the user can set the deadline for the task. Th
 ## Commands
 The following commands are available to the user:
 ```
-todo add <task> <deadline> # Adds a task to the list
-todo view # Views the tasks in the list
-todo done <task> # Marks a task as done
-todo delete <task> # Deletes a task from the list
-todo overdue # Views the tasks that are overdue
+todo -a <task> [-D '<task_description>' -e '<due_date>'] # Adds a task to the list
+todo -l [--overdue] # Views the tasks in the list
+todo -c <task_id> # Marks a task as done
+todo -d <task_id> # Deletes a task from the list
 ```
