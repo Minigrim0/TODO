@@ -13,9 +13,9 @@ pub fn cmd_display_tasks(overdue: bool) {
 }
 
 
-pub fn cmd_add_task(name: Option<String>, description: Option<String>) {
+pub fn cmd_add_task(name: String, description: Option<String>) {
         let mut task_name: String = utils::verfify_or_ask_for_value(
-            name,
+            Some(name),
             "Task name".to_string(),
             false
         );
@@ -40,8 +40,8 @@ pub fn cmd_add_task(name: Option<String>, description: Option<String>) {
 }
 
 
-pub fn cmd_delete_task(task_id: Option<i32>) {
-    let id = validate_task_id(task_id);
+pub fn cmd_delete_task(task_id: i32) {
+    let id = validate_task_id(Some(task_id));
 
     // TODO: Ask for a confirmation
 
@@ -50,8 +50,8 @@ pub fn cmd_delete_task(task_id: Option<i32>) {
     }
 }
 
-pub fn cmd_complete_task(task_id: Option<i32>) {
-    let id = validate_task_id(task_id);
+pub fn cmd_complete_task(task_id: i32) {
+    let id = validate_task_id(Some(task_id));
 
     // Complete task
     if database::complete_task(id) {
