@@ -2,7 +2,7 @@ use colored::Colorize;
 
 use crate::database;
 use crate::display::{display_task, display_tasks};
-use crate::models::NewTask;
+use crate::models::{NewTask, Task};
 use crate::validation::validate_task_id;
 use crate::utils;
 
@@ -13,7 +13,7 @@ pub fn cmd_display_tasks(overdue: bool) {
 }
 
 
-pub fn cmd_add_task(name: String, description: Option<String>) {
+pub fn cmd_add_task(name: String, description: Option<String>) -> Task {
         let mut task_name: String = utils::verfify_or_ask_for_value(
             Some(name),
             "Task name".to_string(),
@@ -35,35 +35,25 @@ pub fn cmd_add_task(name: String, description: Option<String>) {
             due_date: None
         };
 
-        let task: crate::models::Task = database::add_task(new_task);
-        display_task(task);
+        let task: Task = database::add_task(new_task);
+        display_task(task.clone());
+        task
 }
 
 
-pub fn cmd_delete_task(task_id: i32) {
+pub fn cmd_delete_task(task_id: i32) -> bool {
     let id = validate_task_id(Some(task_id));
 
     // TODO: Ask for a confirmation
 
-    if database::delete_task(id) {
-        println!("{}", "Removal successful !".green().bold())
-    }
+    database::delete_task(id)
 }
 
-pub fn cmd_complete_task(task_id: i32) {
+pub fn cmd_complete_task(task_id: i32) -> bool {
     let id = validate_task_id(Some(task_id));
 
     // Complete task
-    if database::complete_task(id) {
-        println!(
-            "{} {} {}",
-            "Successfully marked task".green().bold(),
-            id.to_string().green().bold(),
-            "as completed".green().bold()
-        )
-    }
-    let tasks: Vec<crate::models::Task> = database::read_tasks(false);
-    display_tasks(tasks, false);
+    database::complete_task(id)
 }
 
 pub fn cmd_unknown() {
