@@ -9,7 +9,7 @@ mod tests {
         let description: String = "Description of the test task".to_string();
 
         tasks::cmd_add_task(
-            Some(task_name),
+            task_name,
             Some(description)
         );
 
