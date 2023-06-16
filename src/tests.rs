@@ -43,11 +43,42 @@ mod tests {
 
     #[test]
     fn update_task_name() {
+        let task_title: String = "Testing task 2.5".to_string();
+        
+        let inserted_task = tasks::cmd_add_task(
+            task_title.clone(),
+            None
+        );
 
+        let new_title: String = "Testing task 3".to_string();
+        assert!(
+            tasks::cmd_update_task(
+                inserted_task.id,
+                Some(new_title),
+                None,
+                None
+            )
+        )
     }
 
     #[test]
     fn update_task_description() {
+        let task_title: String = "Testing task 3".to_string();
+        let task_description: String = "This is the testing task 2!".to_string();
 
+        let inserted_task = tasks::cmd_add_task(
+            task_title.clone(),
+            Some(task_description)
+        );
+
+        let new_description: String = "This is the testing task 3!".to_string();
+        assert!(
+            tasks::cmd_update_task(
+                inserted_task.id,
+                None,
+                Some(new_description),
+                None
+            )
+        )
     }
 }
