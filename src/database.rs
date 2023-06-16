@@ -105,3 +105,29 @@ pub fn complete_task(task_id: i32) -> bool {
 
     get_task(task_id).status == true
 }
+
+pub fn update_task_name(task_id: i32, new_title: String) -> bool {
+    use crate::schema::tasks::dsl::{tasks, title};
+
+    let conn: &mut SqliteConnection = &mut establish_connection();
+
+    diesel::update(tasks.find(task_id))
+        .set(title.eq(new_title.clone()))
+        .execute(conn)
+        .unwrap();
+
+    get_task(task_id).title == new_title
+}
+
+pub fn update_task_description(task_id: i32, new_description: String) -> bool {
+    use crate::schema::tasks::dsl::{tasks, description};
+
+    let conn: &mut SqliteConnection = &mut establish_connection();
+
+    diesel::update(tasks.find(task_id))
+        .set(description.eq(new_description.clone()))
+        .execute(conn)
+        .unwrap();
+
+    get_task(task_id).description == Some(new_description)
+}
