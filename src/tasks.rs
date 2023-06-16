@@ -56,6 +56,22 @@ pub fn cmd_complete_task(task_id: i32) -> bool {
     database::complete_task(id)
 }
 
+pub fn cmd_update_task(task_id: i32, task_title: Option<String>, task_description: Option<String>, _task_date: Option<String>) -> bool {
+    let id: i32 = validate_task_id(Some(task_id));
+
+    let title_upd = match task_title {
+        Some(title) => database::update_task_name(id, title),
+        None => true
+    };
+
+    let desc_upd = match task_description {
+        Some(description) => database::update_task_description(id, description),
+        None => true
+    };
+
+    title_upd && desc_upd
+}
+
 pub fn cmd_unknown() {
     println!("{}", format!("Could not parse the command, type --help for help").red().bold());
 }
