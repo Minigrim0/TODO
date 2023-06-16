@@ -17,17 +17,22 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
     - name: install dependencies
       run: |
         apt update && apt install build-essential libsqlite3-dev curl -y
         curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+
     - name: update cargo
       run: source "$HOME/.cargo/env" && rustup update
+
     - name: install diesel-cli and init db
       run: |
         source "$HOME/.cargo/env" && cargo install diesel_cli --no-default-features --features sqlite 
         diesel migration run
+
     - name: Build
       run: source "$HOME/.cargo/env" && cargo build --verbose
+
     - name: Run tests
-      run: source "$HOME/.cargo/env" && cargo test -- --test-threads=1 --verbose
+      run: source "$HOME/.cargo/env" && cargo test --verbose -- --test-threads=1
