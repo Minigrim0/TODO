@@ -1,5 +1,6 @@
 build/
 *.sqlite3
+*.profraw
 
 # Added by cargo
 
