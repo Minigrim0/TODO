@@ -30,4 +30,4 @@ jobs:
     - name: Build
       run: source "$HOME/.cargo/env" && cargo build --verbose
     - name: Run tests
-      run: source "$HOME/.cargo/env" && cargo test --verbose
+      run: source "$HOME/.cargo/env" && cargo test -- --test-threads=1 --verbose
