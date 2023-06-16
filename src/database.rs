@@ -37,13 +37,11 @@ pub fn read_tasks(overdue: bool) -> Vec<Task> {
     if overdue {
         results = tasks
         .filter(status.eq(true))
-        .limit(5)
         .select(Task::as_select())
         .load(connection)
         .expect("Error loading tasks");
     } else {
         results = tasks
-        .limit(5)
         .select(Task::as_select())
         .load(connection)
         .expect("Error loading tasks");

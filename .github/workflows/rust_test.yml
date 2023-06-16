@@ -35,4 +35,4 @@ jobs:
       run: source "$HOME/.cargo/env" && cargo build --verbose
 
     - name: Run tests
-      run: source "$HOME/.cargo/env" && cargo test --verbose -- --test-threads=1
+      run: source "$HOME/.cargo/env" && ./test.sh
