@@ -44,10 +44,11 @@ mod tests {
     #[test]
     fn update_task_name() {
         let task_title: String = "Testing task 2.5".to_string();
+        let task_description: String = "This is the testing task 3!".to_string();
         
         let inserted_task = tasks::cmd_add_task(
             task_title.clone(),
-            None
+            Some(task_description.clone())
         );
 
         let new_title: String = "Testing task 3".to_string();
