@@ -13,7 +13,7 @@ pub fn cmd_display_tasks(overdue: bool) {
 }
 
 
-pub fn cmd_add_task(name: String, description: Option<String>) -> Task {
+pub fn cmd_add_task(name: String, description: Option<String>, enddate: Option<String>) -> Task {
         let mut task_name: String = utils::verfify_or_ask_for_value(
             Some(name),
             "Task name".to_string(),
@@ -26,13 +26,20 @@ pub fn cmd_add_task(name: String, description: Option<String>) -> Task {
             true
         );
 
+        let mut deadline: String = utils::verfify_or_ask_for_value(
+            enddate,
+            "Task deadline".to_string(),
+            true
+        );
+
         task_name = task_name.replace("\n", "");
         task_description = task_description.replace("\n", "");
+        deadline = deadline.replace("\n", "");
 
         let new_task = NewTask {
             title: &task_name,
             description: Some(&task_description),
-            due_date: None
+            due_date: Some(&deadline)
         };
 
         let task: Task = database::add_task(new_task);
