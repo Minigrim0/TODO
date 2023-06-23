@@ -10,3 +10,4 @@ colored = "2.0.0"
 diesel = { version = "2.1.0", features = ["sqlite"] }
 dotenvy = "0.15"
 clap = { version = "4.0", features = ["derive"] }
+chrono = "0.4.26"
