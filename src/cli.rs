@@ -21,7 +21,7 @@ pub struct Cli {
     pub task_description: Option<String>,
 
     #[arg(short = 'e', long = "duedate")]
-    /// Defines the due date when creating a task
+    /// Defines the due date when creating a task (format: dd-mm-YYYY)
     pub duedate: Option<String>,
 
     #[arg(short = 'd', long = "delete")]
