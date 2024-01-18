@@ -15,7 +15,7 @@ pub mod parser;
 use crate::cli::Cli;
 use parser::parse_args;
 
-
 fn main() {
+    utils::ensure_db_path();
     parse_args(Cli::parse());
 }

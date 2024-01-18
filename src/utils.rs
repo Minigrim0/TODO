@@ -1,15 +1,42 @@
 use diesel::sqlite::SqliteConnection;
 use diesel::prelude::*;
-use dotenvy::dotenv;
-use std::{env, io, io::Write};
+use std::{io, io::Write};
 use colored::Colorize;
+use directories::ProjectDirs;
+
+use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
+pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!();
+
+fn run_migrations(connection: &mut diesel::sqlite::SqliteConnection) {
+    match connection.run_pending_migrations(MIGRATIONS) {
+        Ok(_m) => (),
+        Err(e) => panic!("Error running migrations: {:?}", e),
+    }
+}
+
+pub fn ensure_db_path() {
+    if let Some(proj_dirs) = ProjectDirs::from("xyz", "Minigrim0",  "TODO") {
+        let database_path = proj_dirs.data_dir();
+
+        if !database_path.exists() {
+            std::fs::create_dir_all(database_path).expect("Error creating database directory");
+            run_migrations(&mut establish_connection());
+        }
+    } else {
+        panic!("Error getting project directories");
+    }
+}
 
 pub fn establish_connection() -> SqliteConnection {
-    dotenv().ok();
+    if let Some(proj_dirs) = ProjectDirs::from("xyz", "Minigrim0",  "TODO") {
+        let database_path = proj_dirs.data_dir();
+        let database_url = format!("{}/todo.db", database_path.to_str().unwrap());
 
-    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    SqliteConnection::establish(&database_url)
-        .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
+        SqliteConnection::establish(&database_url)
+            .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
+    } else {
+        panic!("Error getting project directories");
+    }
 }
 
 pub fn verfify_or_ask_for_value(current_value: Option<String>, value_name: String, optional: bool) -> String {
