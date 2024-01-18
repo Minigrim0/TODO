@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use crate::tasks;
+    use crate::{tasks, database, models};
     use crate::utils;
 
     #[test]
