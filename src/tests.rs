@@ -103,4 +103,22 @@ mod tests {
             )
         )
     }
+
+    #[test]
+    fn overdue_task() {
+        utils::ensure_db_path();
+
+        let task_title: String = "Testing overdue".to_string();
+        let task_desc: String = "this task is overdue".to_string();
+        let task_date: String = "01-01-1970".to_string();
+
+        tasks::cmd_add_task(
+            task_title.clone(),
+            Some(task_desc),
+            Some(task_date)
+        );
+
+        let overdue_tasks: Vec<models::Task> = database::read_tasks(true);
+        assert!(overdue_tasks.len() == 1);
+    }
 }
