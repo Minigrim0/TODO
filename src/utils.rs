@@ -5,6 +5,7 @@ use colored::Colorize;
 use directories::ProjectDirs;
 
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
+
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!();
 
 fn run_migrations(connection: &mut diesel::sqlite::SqliteConnection) {
@@ -20,8 +21,8 @@ pub fn ensure_db_path() {
 
         if !database_path.exists() {
             std::fs::create_dir_all(database_path).expect("Error creating database directory");
-            run_migrations(&mut establish_connection());
         }
+        run_migrations(&mut establish_connection());
     } else {
         panic!("Error getting project directories");
     }

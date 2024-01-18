@@ -1,9 +1,12 @@
 #[cfg(test)]
 mod tests {
     use crate::tasks;
+    use crate::utils;
 
     #[test]
     fn create_task() {
+        utils::ensure_db_path();
+
         let task_name: String = "Testing Task 1".to_string();
         let description: String = "This task is created".to_string();
         let date: String = "01-01-1970".to_string();
@@ -19,6 +22,8 @@ mod tests {
 
     #[test]
     fn close_task() {
+        utils::ensure_db_path();
+
         let task_name: String = "Testing task 2".to_string();
         let task_description: String = "This task should be completed".to_string();
         let date: String = "01-01-1970".to_string();
@@ -34,6 +39,8 @@ mod tests {
 
     #[test]
     fn delete_task() {
+        utils::ensure_db_path();
+
         let task_name: String = "Testing task 2".to_string();
         let task_description: String = "This task should be deleted".to_string();
         let date: String = "01-01-1970".to_string();
@@ -49,6 +56,8 @@ mod tests {
 
     #[test]
     fn update_task_name() {
+        utils::ensure_db_path();
+
         let task_title: String = "Testing task 2.5".to_string();
         let task_description: String = "This is the testing task 3!".to_string();
         let date: String = "01-01-1970".to_string();
@@ -72,6 +81,8 @@ mod tests {
 
     #[test]
     fn update_task_description() {
+        utils::ensure_db_path();
+
         let task_title: String = "Testing task 3".to_string();
         let task_description: String = "This is the testing task 2!".to_string();
         let date: String = "01-01-1970".to_string();
