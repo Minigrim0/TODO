@@ -1,14 +1,13 @@
 use clap::Parser;
 
-
 #[derive(Parser, Default, Debug)]
-#[clap(author="Minigrim0", version, about="A simple CLI task manager")]
+#[clap(author = "Minigrim0", version, about = "A simple CLI task manager")]
 pub struct Cli {
     #[arg(short = 'l', long = "list")]
     /// Lists tasks
     pub command_list: bool,
-    
-    #[arg(long="overdue")]
+
+    #[arg(long = "overdue")]
     /// Only display overdue tasks
     pub show_overdue: bool,
 

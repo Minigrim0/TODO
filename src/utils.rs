@@ -1,8 +1,8 @@
-use diesel::sqlite::SqliteConnection;
-use diesel::prelude::*;
-use std::{io, io::Write};
 use colored::Colorize;
+use diesel::prelude::*;
+use diesel::sqlite::SqliteConnection;
 use directories::ProjectDirs;
+use std::{io, io::Write};
 
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 
@@ -16,7 +16,7 @@ fn run_migrations(connection: &mut diesel::sqlite::SqliteConnection) {
 }
 
 pub fn ensure_db_path() {
-    if let Some(proj_dirs) = ProjectDirs::from("xyz", "Minigrim0",  "TODO") {
+    if let Some(proj_dirs) = ProjectDirs::from("xyz", "Minigrim0", "TODO") {
         let database_path = proj_dirs.data_dir();
 
         if !database_path.exists() {
@@ -29,7 +29,7 @@ pub fn ensure_db_path() {
 }
 
 pub fn establish_connection() -> SqliteConnection {
-    if let Some(proj_dirs) = ProjectDirs::from("xyz", "Minigrim0",  "TODO") {
+    if let Some(proj_dirs) = ProjectDirs::from("xyz", "Minigrim0", "TODO") {
         let database_path = proj_dirs.data_dir();
         let database_url = format!("{}/todo.db", database_path.to_str().unwrap());
 
@@ -40,7 +40,11 @@ pub fn establish_connection() -> SqliteConnection {
     }
 }
 
-pub fn verfify_or_ask_for_value(current_value: Option<String>, value_name: String, optional: bool) -> String {
+pub fn verfify_or_ask_for_value(
+    current_value: Option<String>,
+    value_name: String,
+    optional: bool,
+) -> String {
     let mut new_value: String = String::new();
     match current_value {
         Some(t_name) => t_name,
@@ -51,14 +55,19 @@ pub fn verfify_or_ask_for_value(current_value: Option<String>, value_name: Strin
                 format!(
                     "Choose a value for the field '{}' {} : ",
                     value_name,
-                    if optional { "[optional]".green() } else { "[required]".red() }
-                ).blue()
+                    if optional {
+                        "[optional]".green()
+                    } else {
+                        "[required]".red()
+                    }
+                )
+                .blue()
             );
             io::stdout().flush().expect("An error occured");
             loop {
                 let stdin: io::Stdin = io::stdin(); // We get `Stdin` here.
                 stdin.read_line(&mut new_value).expect("Invalid name");
-                if !optional && new_value == "" {
+                if !optional && new_value.is_empty() {
                     println!("{}", "Name cannot be empty !".red())
                 } else {
                     break;

@@ -3,14 +3,14 @@ use clap::Parser;
 mod tests;
 
 pub mod cli;
-pub mod schema;
-pub mod models;
 pub mod database;
 pub mod display;
-pub mod tasks;
-pub mod validation;
-pub mod utils;
+pub mod models;
 pub mod parser;
+pub mod schema;
+pub mod tasks;
+pub mod utils;
+pub mod validation;
 
 use crate::cli::Cli;
 use parser::parse_args;

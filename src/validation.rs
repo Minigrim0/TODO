@@ -9,9 +9,11 @@ pub fn validate_task_id(task_id: Option<i32>) -> i32 {
                 "Invalid ID '{}'",
                 match task_id {
                     Some(id) => id.to_string(),
-                    None => "None".to_string()
+                    None => "None".to_string(),
                 }
-            ).red().bold()
+            )
+            .red()
+            .bold()
         );
         std::process::exit(-1);
     }

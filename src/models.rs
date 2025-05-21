@@ -17,5 +17,5 @@ pub struct Task {
 pub struct NewTask<'a> {
     pub title: &'a str,
     pub description: Option<&'a str>,
-    pub due_date: Option<&'a str>
+    pub due_date: Option<&'a str>,
 }
