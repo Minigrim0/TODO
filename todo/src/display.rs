@@ -28,7 +28,18 @@ pub fn display_tasks(tasks: Vec<crate::models::Task>, show_amount: bool) {
     for task in tasks {
         let task_overdue: bool  = match task.due_date.clone() {
             Some(enddate) => {
-                let task_enddate: NaiveDate = NaiveDate::parse_from_str(&(enddate.as_str()), "%d-%m-%Y").unwrap();
+                let task_enddate: NaiveDate = match NaiveDate::parse_from_str(&(enddate.as_str()), "%d-%m-%Y") {
+                    Ok(date) => date,
+                    Err(_) => {
+                        match NaiveDate::parse_from_str(&(enddate.as_str()), "%d/%m/%Y") {
+                            Ok(date) => date,
+                            Err(_) => {
+                                eprintln!("Unable to parse the task date: ({})", enddate.as_str());
+                                Local::now().date_naive()
+                            }
+                        }
+                    }
+                };
                 let diff = task_enddate - today;
                 diff < Duration::zero()
             },

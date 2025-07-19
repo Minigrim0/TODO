@@ -1,0 +1,21 @@
+[package]
+name = "todo"
+description = "A command line tool for managing tasks"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+colored = "2.0.0"
+diesel = { version = "2.1.0", features = ["sqlite"] }
+chrono = "0.4.26"
+directories = "5.0.1"
+diesel_migrations = { version = "2.1.0", features = ["sqlite"] }
+clap = { version = "4.5.40", optional = true }
+
+[features]
+clap = ["dep:clap"]
+
+[[bin]]
+name = "cli"
+path = "src/bin/cli.rs"
+required-features = ["clap"]

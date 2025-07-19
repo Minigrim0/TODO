@@ -31,6 +31,9 @@ pub fn ensure_db_path() {
 pub fn establish_connection() -> SqliteConnection {
     if let Some(proj_dirs) = ProjectDirs::from("xyz", "Minigrim0",  "TODO") {
         let database_path = proj_dirs.data_dir();
+        #[cfg(test)]
+        let database_url = format!("{}/test.db", database_path.to_str().unwrap());
+        #[cfg(not(test))]
         let database_url = format!("{}/todo.db", database_path.to_str().unwrap());
 
         SqliteConnection::establish(&database_url)
